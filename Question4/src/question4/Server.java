@@ -1,11 +1,12 @@
 package question4;
 
-import java.awt.BorderLayout;
+import java.awt.*;
+import java.awt.Component;
 import javax.swing.*;
 
 public class Server extends JFrame{
     
-    private JPanel pn1,pn2;
+    private JPanel pn1,pn2,pn3;
     private JLabel servLb;
     private JTextField inputFld;
     private JTextArea outFld;
@@ -16,7 +17,7 @@ public class Server extends JFrame{
     public Server() {
         //JFrame
         this.setTitle("Server Chat");
-        this.setSize(600,500);
+        this.setSize(600,380);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -24,9 +25,11 @@ public class Server extends JFrame{
         //JPanel
         pn1 = new JPanel();
         pn2 = new JPanel();
+        pn3 = new JPanel(new GridLayout(5,5,5,5));
         
         //JLabel
-        servLb = new JLabel("Server",SwingConstants.LEFT);
+        servLb = new JLabel("Server");
+        servLb.setHorizontalAlignment(JLabel.LEFT);
         
         //JTextfields and area
         inputFld = new JTextField(20);
@@ -38,7 +41,7 @@ public class Server extends JFrame{
         
         //Box Layout
         //horisontal boxes
-        
+                
         horBox1 = Box.createHorizontalBox();
         horBox1.add(Box.createHorizontalStrut(5));
         horBox1.add(inputFld);
@@ -46,33 +49,34 @@ public class Server extends JFrame{
         horBox1.add(sendBtn);
         
         horBox2 = Box.createHorizontalBox();
-        horBox1.add(Box.createHorizontalStrut(5));
         horBox2.add(Box.createHorizontalStrut(230));
         horBox2.add(exitBtn);
       
         horBoxArea = Box.createHorizontalBox();
         horBoxArea.add(Box.createHorizontalStrut(-5));
         horBoxArea.add(outFld);
-        horBoxArea.add(Box.createHorizontalStrut(5));
+        horBoxArea.add(Box.createHorizontalStrut(10));
         
         //vertical boxes
         vertBox1 = Box.createVerticalBox();
-        vertBox1.add(Box.createVerticalStrut(5));
         vertBox1.add(servLb);
-        vertBox1.add(Box.createVerticalStrut(50));
+        vertBox1.add(Box.createVerticalStrut(40));
         vertBox1.add(horBox1);
-        vertBox1.add(Box.createVerticalStrut(100));
+        vertBox1.add(Box.createVerticalStrut(120));
         vertBox1.add(horBox2);
         
         vertBox2 = Box.createVerticalBox();
-        vertBox2.add(Box.createVerticalStrut(30));
+        vertBox2.add(Box.createVerticalStrut(20));
         vertBox2.add(horBoxArea);
+        vertBox2.add(Box.createVerticalStrut(20));
         
         //adding to panel
+        
         pn1.add(vertBox1);
         pn2.add(vertBox2);
         
         //JFrame
+        this.add(pn3, BorderLayout.NORTH);
         this.add(pn1, BorderLayout.WEST);
         this.add(pn2, BorderLayout.EAST);
         this.setVisible(true); 
