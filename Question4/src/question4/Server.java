@@ -2,6 +2,17 @@ package question4;
 
 import java.awt.*;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 public class Server extends JFrame{
@@ -11,10 +22,17 @@ public class Server extends JFrame{
     private JTextField inputFld;
     private JTextArea outFld;
     private JButton sendBtn, exitBtn;
-    private Box horBox1,horBox2,horBoxServ,horBoxArea;
+    private Box horBox1,horBox2,horBoxArea;
     private Box vertBox1,vertBox2;
+    public Boolean click = false;
+    private String txtClient;
+    private String txtServer;
     
     public Server() {
+        
+        //attributes
+        txtServer = " "; 
+       
         //JFrame
         this.setTitle("Server Chat");
         this.setSize(600,380);
@@ -37,7 +55,10 @@ public class Server extends JFrame{
         
         //JButton
         sendBtn = new JButton("Send");
+        sendBtn.addActionListener(new send()); 
+        
         exitBtn = new JButton("Exit");
+        exitBtn.addActionListener(new exit()); 
         
         //Box Layout
         //horisontal boxes
@@ -81,8 +102,62 @@ public class Server extends JFrame{
         this.add(pn2, BorderLayout.EAST);
         this.setVisible(true); 
     }
+    public Server(String txtServer) {
+        
+        this.txtServer = txtServer;
+    }
+    
+    public void setInputTxt(String txtServer) {
+        this.txtServer = txtServer;
+    }
+    
+    public String getInputTxt() {
+        
+       return txtServer;
+    }
+    
+    class send implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String sendTxt = inputFld.getText();
+            String servTime = new SimpleDateFormat("HH.mm.ss").format(new Date());
+            String sendFor = servTime+" "+sendTxt+"\n";
+            setInputTxt(sendFor);
+            inputFld.setText(null); 
+            outFld.append(sendFor);   
+        }
+    }
+    
+    class exit implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
+        }
+    }
     
     public static void main(String[]args) {
         Server serv = new Server();
+        System.out.println("Server starting");
+        try {
+            ServerSocket serv1 = new ServerSocket(9000);
+            Socket ser2 = serv1.accept();
+            
+            //sending
+            DataInputStream input = new DataInputStream(ser2.getInputStream());
+            String ins = input.readUTF();
+            serv.outFld.append(ins);
+            
+            //receiving
+            DataOutputStream output = new DataOutputStream(ser2.getOutputStream());
+            String txtOut = serv.getInputTxt();
+            output.writeUTF(txtOut);
+            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }

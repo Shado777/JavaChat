@@ -2,6 +2,13 @@ package question4;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,7 +19,7 @@ import javax.swing.JTextField;
 
 public class Client extends JFrame{
     
-     private JPanel pn1,pn2,pn3;
+    private JPanel pn1,pn2,pn3;
     private JLabel servLb;
     private JTextField inputFld;
     private JTextArea outFld;
@@ -43,7 +50,9 @@ public class Client extends JFrame{
         
         //JButton
         sendBtn = new JButton("Send");
+        
         exitBtn = new JButton("Exit");
+        exitBtn.addActionListener(new exitCl()); 
         
         //Box Layout
         //horisontal boxes
@@ -88,7 +97,36 @@ public class Client extends JFrame{
         this.setVisible(true); 
     }
     
+    
+    class sendCl implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+        }
+    }
+    
+    class exitCl implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0); 
+        }
+    }
+    
     public static void main(String[]args) {
         Client client = new Client();
+        
+         try {
+             Socket client1 = new Socket("localhost",9000);
+             DataInputStream input = new DataInputStream(client1.getInputStream());
+             String ins = (String)input.readUTF();
+             client.outFld.append(ins);
+             
+             
+             
+         } catch (IOException ex) {
+             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+         }
     }
 }
