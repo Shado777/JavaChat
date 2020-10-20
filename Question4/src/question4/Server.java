@@ -20,13 +20,14 @@ public class Server extends JFrame{
     private JPanel pn1,pn2,pn3;
     private JLabel servLb;
     private JTextField inputFld;
-    private JTextArea outFld;
+    private static JTextArea outFld;
     private JButton sendBtn, exitBtn;
     private Box horBox1,horBox2,horBoxArea;
     private Box vertBox1,vertBox2;
     public Boolean click = false;
-    private String txtClient;
     private String txtServer;
+    public static DataInputStream input;
+    public static DataOutputStream output;
     
     public Server() {
         
@@ -102,19 +103,6 @@ public class Server extends JFrame{
         this.add(pn2, BorderLayout.EAST);
         this.setVisible(true); 
     }
-    public Server(String txtServer) {
-        
-        this.txtServer = txtServer;
-    }
-    
-    public void setInputTxt(String txtServer) {
-        this.txtServer = txtServer;
-    }
-    
-    public String getInputTxt() {
-        
-       return txtServer;
-    }
     
     class send implements ActionListener{
 
@@ -122,10 +110,17 @@ public class Server extends JFrame{
         public void actionPerformed(ActionEvent e) {
             String sendTxt = inputFld.getText();
             String servTime = new SimpleDateFormat("HH.mm.ss").format(new Date());
-            String sendFor = servTime+" "+sendTxt+"\n";
-            setInputTxt(sendFor);
-            inputFld.setText(null); 
-            outFld.append(sendFor);   
+            String sendFor = servTime+" Server "+sendTxt+"\n";
+            
+            try { 
+                output.writeUTF(sendFor);
+                outFld.append(sendFor); 
+                inputFld.setText(null); 
+            } 
+            catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                    
         }
     }
     
@@ -145,15 +140,11 @@ public class Server extends JFrame{
             Socket ser2 = serv1.accept();
             
             //sending
-            DataInputStream input = new DataInputStream(ser2.getInputStream());
+            input = new DataInputStream(ser2.getInputStream());
+            output = new DataOutputStream(ser2.getOutputStream());
             String ins = input.readUTF();
-            serv.outFld.append(ins);
-            
-            //receiving
-            DataOutputStream output = new DataOutputStream(ser2.getOutputStream());
-            String txtOut = serv.getInputTxt();
-            output.writeUTF(txtOut);
-            
+            outFld.append(ins);
+                     
             
         } catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);

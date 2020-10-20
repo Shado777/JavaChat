@@ -5,8 +5,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
@@ -16,16 +19,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import static question4.Server.output;
 
 public class Client extends JFrame{
     
     private JPanel pn1,pn2,pn3;
     private JLabel servLb;
     private JTextField inputFld;
-    private JTextArea outFld;
+    private static JTextArea outFld;
     private JButton sendBtn, exitBtn;
     private Box horBox1,horBox2,horBoxArea;
     private Box vertBox1,vertBox2;
+    public static DataInputStream input;
+    public static DataOutputStream output;
     
     public Client() {
         //JFrame
@@ -50,6 +56,7 @@ public class Client extends JFrame{
         
         //JButton
         sendBtn = new JButton("Send");
+        sendBtn.addActionListener(new sendCl());
         
         exitBtn = new JButton("Exit");
         exitBtn.addActionListener(new exitCl()); 
@@ -102,7 +109,19 @@ public class Client extends JFrame{
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            String sendTxt = inputFld.getText();
+            String clientTime = new SimpleDateFormat("HH.mm.ss").format(new Date());
+            String sendFor = clientTime+" Client "+sendTxt+"\n";
             
+            try { 
+                output.writeUTF(sendFor);
+                outFld.append(sendFor); 
+                inputFld.setText(null);
+            } 
+            catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            inputFld.setText(null);         
         }
     }
     
@@ -119,9 +138,10 @@ public class Client extends JFrame{
         
          try {
              Socket client1 = new Socket("localhost",9000);
-             DataInputStream input = new DataInputStream(client1.getInputStream());
+             input = new DataInputStream(client1.getInputStream());
+             output = new DataOutputStream(client1.getOutputStream()); 
              String ins = (String)input.readUTF();
-             client.outFld.append(ins);
+             outFld.append(ins);
              
              
              
