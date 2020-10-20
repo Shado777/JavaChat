@@ -43,7 +43,7 @@ public class Server extends JFrame{
         //JPanel
         pn1 = new JPanel();
         pn2 = new JPanel();
-        pn3 = new JPanel(new GridLayout(5,5,5,5));
+        pn3 = new JPanel(new GridLayout(2,2,5,5));
         
         //JLabel
         servLb = new JLabel("Server");
