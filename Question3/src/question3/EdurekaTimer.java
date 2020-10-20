@@ -6,11 +6,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 
-public class EdurekaTimer extends JFrame implements Runnable{
+public class EdurekaTimer extends JFrame{
     
-    private String threadName;
-    private Thread timerRun;
-    private boolean pause;
+    static int mills =0;
+    static int sec =0;
+    static boolean pause = false;
     private JPanel pn1;
     private JLabel timerLb;
     private JTextField timerFld;
@@ -19,7 +19,6 @@ public class EdurekaTimer extends JFrame implements Runnable{
     
     public EdurekaTimer() {
     
-        pause = true;
         //JFrame
         this.setTitle("Edureka Timer"); 
         this.setSize(300,130);
@@ -35,7 +34,6 @@ public class EdurekaTimer extends JFrame implements Runnable{
         
         //JTextfield
         timerFld = new JTextField(10);
-        timerFld.setText("0"); 
         timerFld.setEditable(false); 
         
         //JButton
@@ -43,6 +41,7 @@ public class EdurekaTimer extends JFrame implements Runnable{
         startBtn.addActionListener(new startThread()); 
         
         stopBtn = new JButton("Stop Timer");
+        stopBtn.addActionListener(new pause()); 
         
         //Horisontal box
         horBox1 = Box.createHorizontalBox();
@@ -75,48 +74,38 @@ public class EdurekaTimer extends JFrame implements Runnable{
         this.setVisible(true); 
     }
     
-    public EdurekaTimer(String threadName, boolean pause){
-        this.threadName = threadName;
-        this.pause = pause;
-    }
-    
-    public boolean getPause() {
-        return pause;
-    }
-    
-    @Override
-    public void run() {
-        String countShow = null;
-        String countTxt = timerFld.getText();
-        int count = Integer.parseInt(countTxt);
-        int seconds = 1;
-            
-        while(pause == false) {
-                
-          try {
-            count++;
-            countShow = Integer.toString(count);
-            Thread.sleep(seconds);
-          } 
-          catch (InterruptedException ex) {
-            Logger.getLogger(EdurekaTimer.class.getName()).log(Level.SEVERE, null, ex);
-          }  
-        }
-        timerFld.setText(countShow);
-    }
-    public void start(){
-        
-        if(pause == false) {
-           timerRun = new Thread(this,threadName);
-           timerRun.start();
-        }
-    }
-    
     class startThread implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             pause = false;
+            
+            Thread timer = new Thread(){
+                public void run() {
+                
+                    //for loop to infinite count when there is no pause
+                    for(;;) {
+                        if(pause == false){
+                        
+                         try{
+                            sleep(1); //thread counts in seconds
+                            if(mills > 1000) { //thousand milliseconds are a second
+                                mills = 0;
+                                sec++;
+                            }
+                            mills++;
+                            timerFld.setText(""+sec);
+                        }
+                        catch(Exception e) {}
+                        
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                }
+            };
+            timer.start();
         }
     }
     
@@ -132,9 +121,6 @@ public class EdurekaTimer extends JFrame implements Runnable{
     public static void main(String[]args) {
     
         EdurekaTimer timer = new EdurekaTimer();
-        boolean result = timer.getPause();
-        if(result == false) {
-            timer.start();
-        }
+        
     }
 }
