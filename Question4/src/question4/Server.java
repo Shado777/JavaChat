@@ -24,15 +24,11 @@ public class Server extends JFrame{
     private JButton sendBtn, exitBtn;
     private Box horBox1,horBox2,horBoxArea;
     private Box vertBox1,vertBox2;
-    public Boolean click = false;
-    private String txtServer;
     public static DataInputStream input;
     public static DataOutputStream output;
     
     public Server() {
-        
-        //attributes
-        txtServer = " "; 
+ 
        
         //JFrame
         this.setTitle("Server Chat");
